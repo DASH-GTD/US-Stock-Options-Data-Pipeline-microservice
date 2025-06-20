@@ -12,5 +12,6 @@ logs/
 .DS_Store
 migrations/
 Demo/
+.env/
 init-db.sql/
 Backend/.env
