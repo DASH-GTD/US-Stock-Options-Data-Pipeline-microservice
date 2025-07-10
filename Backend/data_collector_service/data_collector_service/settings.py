@@ -23,10 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
-
+# SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+SECRET_KEY = "django-insecure-k^c404!2*woj(h(+ek*e#=0sh^qrjw9y-g34m^*qy=^=!43v%^"
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("APP_DEBUG")
+# DEBUG = os.getenv("APP_DEBUG")
+DEBUG = True
 
 ALLOWED_HOSTS = ["data_collector", "localhost","*"]
 
@@ -129,7 +130,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-KAFKA_BOOTSTRAP_SERVERS = "kafka-controller-headless.default.svc.cluster.local:9092"
+KAFKA_BOOTSTRAP_SERVERS = "kafka:9092"
 KAFKA_TOPICS = {
     'trigger-daily': os.getenv('KAFKA_TRIGGER_DAILY'),
     'trigger-15min': os.getenv('KAFKA_TRIGGER_15MIN'),
@@ -141,6 +142,11 @@ KAFKA_TOPICS = {
     'historical': os.getenv("KAFKA_HISTORICAL_TOPIC")
 }
 
+TWELVE_DATA_API_KEYS = [os.getenv("TWELVE_DATA_API_1"),
+                        os.getenv("TWELVE_DATA_API_2"),
+                        os.getenv("TWELVE_DATA_API_3"),
+                        os.getenv("TWELVE_DATA_API_4"),
+                        os.getenv("TWELVE_DATA_API_5")]
 TWELVE_DATA_API_1 = os.getenv("TWELVE_DATA_API_1")
 TWELVE_DATA_API_2 = os.getenv("TWELVE_DATA_API_2")
 TWELVE_DATA_API_3 = os.getenv("TWELVE_DATA_API_3")

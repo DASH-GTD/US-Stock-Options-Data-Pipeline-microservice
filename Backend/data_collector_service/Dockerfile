@@ -25,4 +25,4 @@ COPY . .
 EXPOSE 8000
 
 # Run Gunicorn with configuration
-CMD ["gunicorn", "-c", "gunicorn_config.py", "data_collector_service.wsgi:application"]
+CMD ["python","manage.py", "runserver", "0.0.0.0:8000"]

@@ -3,7 +3,7 @@ from django.conf import settings
 import os 
 
 # Kafka configuration
-KAFKA_BOOTSTRAP_SERVERS = "kafka-controller-headless.default.svc.cluster.local:9092"
+KAFKA_BOOTSTRAP_SERVERS = "kafka:9092"
 CONSUMER_CONFIG = {
     'bootstrap.servers': KAFKA_BOOTSTRAP_SERVERS,
     'group.id': 'data_processor_group',
