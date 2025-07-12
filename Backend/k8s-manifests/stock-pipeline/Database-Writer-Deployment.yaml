@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database-writer
+  namespace: stock-pipeline
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database-writer
+  template:
+    metadata:
+      labels:
+        app: database-writer
+    spec:
+      containers:
+      - name: database-writer
+        image: hdm08/backend-database-writer:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8002
+        envFrom:
+        - configMapRef:
+            name: database-writer-config
+        - secretRef:
+            name: database-writer-secrets
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8002
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 10
+          failureThreshold: 5

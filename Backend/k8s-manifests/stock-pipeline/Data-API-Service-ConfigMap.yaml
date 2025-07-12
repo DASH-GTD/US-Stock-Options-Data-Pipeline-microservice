@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: data-api-service-config
+  namespace: stock-pipeline
+data:
+  SQL_SERVER: "dash-gtd.database.windows.net"
+  SQL_DATABASE: "us_stock_options_db"
+  SQL_DRIVER: "ODBC Driver 18 for SQL Server"
+  DJANGO_DEBUG: "True"

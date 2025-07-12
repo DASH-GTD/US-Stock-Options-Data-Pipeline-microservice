@@ -19,13 +19,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django_prometheus import exports
-from prometheus_client import make_asgi_app
-from django.http import HttpResponse
-import prometheus_client
 
+from django.http import JsonResponse
+from django.urls import path
 
+def health_check(request):
+    return JsonResponse({"status": "ok"})
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("metrics/", exports.ExportToDjangoView, name="prometheus-django-metrics"),
+    path("health/", health_check),
+
 ]

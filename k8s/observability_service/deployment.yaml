@@ -15,6 +15,6 @@ spec:
       containers:
         - name: observer
           image: observability_service:latest
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8005

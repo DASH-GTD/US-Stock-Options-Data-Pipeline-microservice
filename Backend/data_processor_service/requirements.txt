@@ -6,4 +6,5 @@ python-dateutil==2.9.0
 pytz==2024.1
 python-dotenv==1.1.0
 django-prometheus
-gunicorn
+gunicorn>=23.0.0 
+

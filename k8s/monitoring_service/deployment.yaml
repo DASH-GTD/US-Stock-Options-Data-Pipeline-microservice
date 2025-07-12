@@ -15,6 +15,6 @@ spec:
       containers:
         - name: monitor
           image: monitoring_service:latest
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8004

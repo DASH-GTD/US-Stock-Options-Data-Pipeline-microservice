@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: database-writer-config
+  namespace: stock-pipeline
+data:
+  INFLUXDB_URL: "https://us-east-1-1.aws.cloud2.influxdata.com"
+  INFLUXDB_ORG: "US_Stock_Data"
+  INFLUXDB_BUCKET: "fifteenmin_stockdata"
+  KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+  KAFKA_PROCESSED_DAILY: "processed-daily-data"
+  KAFKA_PROCESSED_15MIN: "processed-15min-data"
+  KAFKA_PROCESSED_OPTIONS: "processed-options-data"
+  KAFKA_PROCESSED_HISTORICAL: "processed-historical-data"
+  DJANGO_SECRET_KEY: "django-insecure-np#5k+3!h2y5he0r=inoh*l5^nw*!t-&e^t-p5zb5ror*^jkyw"
+  APP_DEBUG: "True"
+  RUN_DB_HANDLER: "False"

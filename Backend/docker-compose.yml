@@ -3,6 +3,7 @@ x-airflow-common:
     build:
       context: .
       dockerfile: Dockerfile-airflow
+    image: hdm08/backend-airflow:latest
     environment:
       &airflow-common-env
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
@@ -52,6 +53,8 @@ services:
     build:
       context: ./data_collector_service
       dockerfile: Dockerfile
+    image: hdm08/backend-data-collector:latest
+
     environment:
       - TWELVE_DATA_API_1=<enter_api_key1_here>
       - TWELVE_DATA_API_2=<enter_api_key2_here>
@@ -80,6 +83,8 @@ services:
     build:
       context: ./data_processor_service
       dockerfile: Dockerfile
+    image: hdm08/backend-data-processor:latest
+
     environment:
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       - KAFKA_DAILY_TOPIC=daily-data
@@ -108,6 +113,8 @@ services:
     build:
       context: ./database_writer_service
       dockerfile: Dockerfile
+    image: hdm08/backend-database-writer:latest
+
     environment:
       - AZURE_SQL_CONNECTION_STRING=${AZURE_SQL_CONNECTION_STRING}
 
@@ -137,6 +144,8 @@ services:
     build:
       context: ./file_writer_service    
       dockerfile: Dockerfile
+    image: hdm08/backend-file-writer:latest
+
     environment:
       - AZURE_SQL_CONNECTION_STRING=${AZURE_SQL_CONNECTION_STRING}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
@@ -154,6 +163,8 @@ services:
     build:
       context: ./data_api_service
       dockerfile: Dockerfile
+    image: hdm08/backend-data-api-service:latest
+
     environment:
       - SQL_SERVER=dash-gtd.database.windows.net
       - SQL_DATABASE=us_stock_options_db
@@ -168,26 +179,6 @@ services:
       - stock_pipeline
     restart: unless-stopped
 
-  monitoring:
-    build:
-      context: ./monitoring_service
-      dockerfile: Dockerfile
-    ports:
-      - "8004:8004"
-    networks:
-      - stock_pipeline
-
-  observability:
-    build:
-      context: ./observability_service
-      dockerfile: Dockerfile
-    ports:
-      - "8005:8005"
-    depends_on:
-      - prometheus
-      - grafana
-    networks:
-      - stock_pipeline
 
   kafka:
     image: confluentinc/cp-kafka:7.4.0
@@ -222,11 +213,6 @@ services:
         sleep 5
       done
 
-      kafka-topics --create --topic fetch-trigger-daily            --bootstrap-server kafka:9092 --replication-factor 1 --partitions 5
-      kafka-topics --create --topic fetch-trigger-15min            --bootstrap-server kafka:9092 --replication-factor 1 --partitions 5
-      kafka-topics --create --topic fetch-trigger-historical       --bootstrap-server kafka:9092 --replication-factor 1 --partitions 5
-      kafka-topics --create --topic fetch-trigger-options          --bootstrap-server kafka:9092 --replication-factor 1 --partitions 5
-    
       kafka-topics --create --topic daily-data                     --bootstrap-server kafka:9092 --replication-factor 1 --partitions 5
       kafka-topics --create --topic 15min-data                     --bootstrap-server kafka:9092 --replication-factor 1 --partitions 5
       kafka-topics --create --topic options-data                   --bootstrap-server kafka:9092 --replication-factor 1 --partitions 5
@@ -236,12 +222,6 @@ services:
       kafka-topics --create --topic processed-15min-data           --bootstrap-server kafka:9092 --replication-factor 1 --partitions 5
       kafka-topics --create --topic processed-options-data         --bootstrap-server kafka:9092 --replication-factor 1 --partitions 5
       kafka-topics --create --topic processed-historical-data      --bootstrap-server kafka:9092 --replication-factor 1 --partitions 5
-
-      kafka-topics --create --topic processed-file-daily-data      --bootstrap-server kafka:9092 --replication-factor 1 --partitions 5
-      kafka-topics --create --topic processed-file-15min-data      --bootstrap-server kafka:9092 --replication-factor 1 --partitions 5
-      kafka-topics --create --topic processed-file-options-data    --bootstrap-server kafka:9092 --replication-factor 1 --partitions 5
-      kafka-topics --create --topic processed-file-historical-data --bootstrap-server kafka:9092 --replication-factor 1 --partitions 5
-
       echo 'Kafka topics created!'
       "
     networks:

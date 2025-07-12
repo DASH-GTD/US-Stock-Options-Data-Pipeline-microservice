@@ -17,13 +17,17 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-import django_prometheus.exports 
-import os
+from django_prometheus import exports
 
+from django.http import JsonResponse
+from django.urls import path
 
+def health_check(request):
+    return JsonResponse({"status": "ok"})
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('api/', include('collector.urls')),
-    path("", include("django_prometheus.urls")),
+    path("metrics/", exports.ExportToDjangoView, name="prometheus-django-metrics"),
+    path("health/", health_check),
 ]

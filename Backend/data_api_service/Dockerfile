@@ -27,4 +27,4 @@ COPY . .
 
 EXPOSE 8006
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8006"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8006", "data_api_service.wsgi:application"]

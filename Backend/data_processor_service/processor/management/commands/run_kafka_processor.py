@@ -74,33 +74,24 @@ class Command(BaseCommand):
                 # Process based on topic
                 if topic == settings.KAFKA_TOPICS['daily']:
                     processed = DailyDataProcessor(data)
-                    output_topics = [
-                        settings.KAFKA_TOPICS['processed-daily'],
-                        settings.KAFKA_TOPICS['processed-file-daily']
-                    ]
+                    output_topic = settings.KAFKA_TOPICS['processed-daily'],
+                    
                 elif topic == settings.KAFKA_TOPICS['15min']:
                     processed = RealTimeDataProcessor(data)
-                    output_topics = [
-                        settings.KAFKA_TOPICS['processed-15min'],
-                        settings.KAFKA_TOPICS['processed-file-15min']
-                    ]
+                    output_topic = settings.KAFKA_TOPICS['processed-15min'],
+                    
                 elif topic == settings.KAFKA_TOPICS['options']:
                     processed = OptionDataProcessor(data)
-                    output_topics = [
-                        settings.KAFKA_TOPICS['processed-options'],
-                        settings.KAFKA_TOPICS['processed-file-options']
-                    ]
+                    output_topic = settings.KAFKA_TOPICS['processed-options'],
+                    
                 elif topic == settings.KAFKA_TOPICS['historical']:
                     processed = HistoricalDataProcessor(data)
-                    output_topics = [
-                        settings.KAFKA_TOPICS['processed-historical'],
-                        settings.KAFKA_TOPICS['processed-file-historical']
-                    ]
+                    output_topic = settings.KAFKA_TOPICS['processed-historical'],
+                    
 
                 data_value = json.dumps(processed).encode('utf-8')
-                for output_topic in output_topics:
-                    logger.info(f"Publishing to {output_topic} from {topic} partition {partition}: {data_value}")
-                    producer.produce(output_topic, value=data_value)
+                logger.info(f"Publishing to {output_topic} from {topic} partition {partition}: {data_value}")
+                producer.produce(output_topic, value=data_value)
                 producer.flush()
 
             except json.JSONDecodeError as e:

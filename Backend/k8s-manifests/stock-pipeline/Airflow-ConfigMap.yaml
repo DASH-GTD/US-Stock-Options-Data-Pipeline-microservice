@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: airflow-config
+  namespace: stock-pipeline
+data:
+  AIRFLOW__CORE__EXECUTOR: LocalExecutor
+  AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
+  AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+  AIRFLOW__API__AUTH_BACKENDS: "airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session"
+  AIRFLOW__CORE__SQL_ALCHEMY_POOL_ENABLED: "True"
+  AIRFLOW__CORE__SQL_ALCHEMY_POOL_SIZE: "5"
+  AIRFLOW__CORE__SQL_ALCHEMY_MAX_OVERFLOW: "10"
+  AIRFLOW__CORE__SQL_ALCHEMY_POOL_RECYCLE: "1800"

@@ -12,4 +12,4 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 EXPOSE 8002
-CMD ["sh", "-c", "python manage.py runserver 0.0.0.0:8002 & python manage.py run_kafka_writer"]
+CMD ["sh", "-c", "python manage.py run_kafka_writer & gunicorn database_writer_service.wsgi:application --bind 0.0.0.0:8002"]

@@ -15,6 +15,6 @@ spec:
       containers:
         - name: data_processor
           image: data_processor_service:latest
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8001

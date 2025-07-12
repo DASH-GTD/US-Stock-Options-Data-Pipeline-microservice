@@ -15,6 +15,6 @@ spec:
       containers:
         - name: airflow_scheduler
           image: airflow_scheduler_service:latest
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: data-collector-config
+  namespace: stock-pipeline
+data:
+  KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+  KAFKA_TRIGGER_DAILY: "fetch-trigger-daily"
+  KAFKA_TRIGGER_15MIN: "fetch-trigger-15min"
+  KAFKA_TRIGGER_HISTORICAL: "fetch-trigger-historical"
+  KAFKA_DAILY_TOPIC: "daily-data"
+  KAFKA_15min_TOPIC: "15min-data"
+  KAFKA_OPTION_TOPIC: "options-data"
+  KAFKA_HISTORICAL_TOPIC: "historical-data"
+  DJANGO_SECRET_KEY: "django-insecure-k^c404!2*woj(h(+ek*e#=0sh^qrjw9y-g34m^*qy=^=!43v%^"
+  APP_DEBUG: "True"

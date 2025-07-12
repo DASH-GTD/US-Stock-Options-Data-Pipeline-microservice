@@ -6,4 +6,4 @@ python-dotenv
 pyodbc>=4.0.39
 python-dotenv==1.1.0
 django-prometheus
-gunicorn
+gunicorn>=23.0.0 

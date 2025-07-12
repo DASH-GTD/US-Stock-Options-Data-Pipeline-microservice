@@ -131,6 +131,7 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 KAFKA_BOOTSTRAP_SERVERS = "kafka:9092"
+
 KAFKA_TOPICS = {
     'trigger-daily': os.getenv('KAFKA_TRIGGER_DAILY'),
     'trigger-15min': os.getenv('KAFKA_TRIGGER_15MIN'),
@@ -147,6 +148,7 @@ TWELVE_DATA_API_KEYS = [os.getenv("TWELVE_DATA_API_1"),
                         os.getenv("TWELVE_DATA_API_3"),
                         os.getenv("TWELVE_DATA_API_4"),
                         os.getenv("TWELVE_DATA_API_5")]
+
 TWELVE_DATA_API_1 = os.getenv("TWELVE_DATA_API_1")
 TWELVE_DATA_API_2 = os.getenv("TWELVE_DATA_API_2")
 TWELVE_DATA_API_3 = os.getenv("TWELVE_DATA_API_3")

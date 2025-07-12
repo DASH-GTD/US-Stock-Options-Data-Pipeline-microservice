@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: file-writer-monitor
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack-prometheus
+spec:
+  selector:
+    matchLabels:
+      io.kompose.service: file-writer
+  namespaceSelector:
+    matchNames:
+      - stock-pipeline
+  endpoints:
+    - port: http           
+      path: /metrics
+      interval: 15s

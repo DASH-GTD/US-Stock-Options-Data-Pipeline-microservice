@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert --file docker-compose.yml --out k8s-manifests
+    kompose.version: 1.36.0 (HEAD)
+  labels:
+    io.kompose.service: data-processor
+  name: data-processor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: data-processor
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert --file docker-compose.yml --out k8s-manifests
+        kompose.version: 1.36.0 (HEAD)
+      labels:
+        io.kompose.service: data-processor
+    spec:
+      containers:
+        - env:
+            - name: APP_DEBUG
+              value: "True"
+            - name: DJANGO_SECRET_KEY
+              value: django-insecure-#2k^ti5^bcw_ce5-73!ce&w6ywg)6(_9gpceh+%!nqa^yp1=r6
+            - name: KAFKA_15min_TOPIC
+              value: 15min-data
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: kafka:9092
+            - name: KAFKA_DAILY_TOPIC
+              value: daily-data
+            - name: KAFKA_HISTORICAL_TOPIC
+              value: historical-data
+            - name: KAFKA_OPTION_TOPIC
+              value: options-data
+            - name: KAFKA_PROCESSED_15MIN
+              value: processed-15min-data
+            - name: KAFKA_PROCESSED_DAILY
+              value: processed-daily-data
+            - name: KAFKA_PROCESSED_FILE_15MIN
+              value: processed-file-15min-data
+            - name: KAFKA_PROCESSED_FILE_DAILY
+              value: processed-file-daily-data
+            - name: KAFKA_PROCESSED_FILE_HISTORICAL
+              value: processed-file-historical-data
+            - name: KAFKA_PROCESSED_FILE_OPTIONS
+              value: processed-file-options-data
+            - name: KAFKA_PROCESSED_HISTORICAL
+              value: processed-historical-data
+            - name: KAFKA_PROCESSED_OPTIONS
+              value: processed-options-data
+          image: data-processor:latest
+          name: data-processor
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8001
+              protocol: TCP
+      restartPolicy: Always

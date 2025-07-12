@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: file-writer
+  namespace: stock-pipeline
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: file-writer
+  template:
+    metadata:
+      labels:
+        app: file-writer
+    spec:
+      containers:
+      - name: file-writer
+        image: hdm08/backend-file-writer:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8003
+        envFrom:
+        - configMapRef:
+            name: file-writer-config
+        - secretRef:
+            name: file-writer-secrets
+        volumeMounts:
+        - name: file-writer-storage
+          mountPath: /data
+      volumes:
+      - name: file-writer-storage
+        persistentVolumeClaim:
+          claimName: file-writer-claim0

@@ -1,0 +1,55 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: stock-pipeline-ingress
+  namespace: stock-pipeline     
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx      
+  rules:
+    - host: dash-gtd.com
+      http:
+        paths:
+          - path: /airflow
+            pathType: Prefix
+            backend:
+              service:
+                name: airflow-service
+                port:
+                  number: 8080
+          - path: /data-api
+            pathType: Prefix
+            backend:
+              service:
+                name: data-api-service
+                port:
+                  number: 8006
+          - path: /data-collector
+            pathType: Prefix
+            backend:
+              service:
+                name: data-collector-service
+                port:
+                  number: 8000
+          - path: /data-processor
+            pathType: Prefix
+            backend:
+              service:
+                name: data-processor-service
+                port:
+                  number: 8001
+          - path: /database-writer
+            pathType: Prefix
+            backend:
+              service:
+                name: database-writer-service
+                port:
+                  number: 8002
+          - path: /file-writer
+            pathType: Prefix
+            backend:
+              service:
+                name: file-writer-service
+                port:
+                  number: 8003

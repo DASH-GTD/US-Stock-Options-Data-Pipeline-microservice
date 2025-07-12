@@ -5,3 +5,5 @@ pyodbc>=4.0.39
 pandas==2.3.0
 influxdb-client==1.46.0
 requests==2.32.3 
+gunicorn>=23.0.0 
+django-prometheus
