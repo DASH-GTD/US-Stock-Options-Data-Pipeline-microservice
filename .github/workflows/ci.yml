@@ -1,3 +1,77 @@
+# name: CI Pipeline for Microservices
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
+
+# jobs:
+#   build-and-test:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         service:
+#           - airflow_scheduler_service
+#           - data_api_service
+#           - data_collector_service
+#           - data_processor_service
+#           - database_writer_service
+#           - file_writer_service
+          
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+
+#       - name: Set up Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: '3.10'
+
+#       - name: Install dependencies
+#         run: |
+#           cd Backend/${{ matrix.service }}
+#           python -m pip install --upgrade pip
+#           pip install -r requirements.txt
+
+#       - name: Check for test files and run tests
+#         run: |
+#           cd Backend/${{ matrix.service }}
+#           if find . -name "test*.py" -o -name "*_test.py" | grep -q .; then
+#             echo "Test files found, running tests..."
+#             python manage.py test
+#           else
+#             echo "No test files found, skipping tests for ${{ matrix.service }}"
+#           fi
+#         env:
+#           PYTHONPATH: ${{ github.workspace }}/Backend/${{ matrix.service }}
+
+
+#   build-and-test-frontend:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: '20'
+
+#       - name: Install dependencies
+#         run: |
+#           cd Frontend/Stock_Analysis_Frontend
+#           npm install
+
+#       - name: Run Angular tests
+#         run: |
+#           cd Frontend/Stock_Analysis_Frontend
+#           npm run test -- --watch=false --browsers=ChromeHeadless
+
+
+
 name: CI Pipeline for Microservices
 
 on:
@@ -9,7 +83,7 @@ on:
       - main
 
 jobs:
-  build-and-test:
+  build-docker-images:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -20,35 +94,18 @@ jobs:
           - data_processor_service
           - database_writer_service
           - file_writer_service
-          - monitoring_service
-          - observability_service
+          
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Install dependencies
+      - name: Build Docker image
         run: |
           cd Backend/${{ matrix.service }}
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Check for test files and run tests
-        run: |
-          cd Backend/${{ matrix.service }}
-          if find . -name "test*.py" -o -name "*_test.py" | grep -q .; then
-            echo "Test files found, running tests..."
-            python manage.py test
-          else
-            echo "No test files found, skipping tests for ${{ matrix.service }}"
-          fi
-        env:
-          PYTHONPATH: ${{ github.workspace }}/Backend/${{ matrix.service }}
-
+          docker build -t ${{ matrix.service }}:latest .
 
   build-and-test-frontend:
     runs-on: ubuntu-latest

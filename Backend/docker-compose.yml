@@ -168,27 +168,6 @@ services:
       - stock_pipeline
     restart: unless-stopped
 
-  monitoring:
-    build:
-      context: ./monitoring_service
-      dockerfile: Dockerfile
-    ports:
-      - "8004:8004"
-    networks:
-      - stock_pipeline
-
-  observability:
-    build:
-      context: ./observability_service
-      dockerfile: Dockerfile
-    ports:
-      - "8005:8005"
-    depends_on:
-      - prometheus
-      - grafana
-    networks:
-      - stock_pipeline
-
   kafka:
     image: confluentinc/cp-kafka:7.4.0
     environment:
