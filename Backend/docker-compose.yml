@@ -276,7 +276,7 @@ services:
       - "9090:9090"
     networks:
       - stock_pipeline
-      - monitoring
+      - 
 
 
   grafana:
@@ -290,7 +290,7 @@ services:
       - grafana_data:/var/lib/grafana
     networks:
       - stock_pipeline
-      - monitoring
+      - 
   
   node-exporter:
     image: prom/node-exporter:latest
@@ -298,7 +298,7 @@ services:
     ports:
       - "9100:9100"
     networks:
-      - monitoring
+      - 
 
 volumes:
   mysql_data:
@@ -308,6 +308,4 @@ volumes:
 
 networks:
   stock_pipeline:
-    driver: bridge
-  monitoring:
     driver: bridge
