@@ -30,10 +30,10 @@ class RealTimeDataFileWriter:
         yesterday = today - timedelta(days=1)
 
         # Option to override dates via environment (for Airflow or debugging)
-        #start_time = os.getenv('START_TIME') or datetime.combine(yesterday, datetime.min.time(), tzinfo=timezone.utc).isoformat()
-        #end_time = os.getenv('END_TIME') or datetime.combine(today, datetime.min.time(), tzinfo=timezone.utc).isoformat()
-        start_time = "2025-07-02T00:00:00Z"
-        end_time = "2025-07-03T00:00:00Z"
+        start_time = os.getenv('START_TIME') or datetime.combine(yesterday, datetime.min.time(), tzinfo=timezone.utc).isoformat()
+        end_time = os.getenv('END_TIME') or datetime.combine(today, datetime.min.time(), tzinfo=timezone.utc).isoformat()
+        #start_time = "2025-07-02T00:00:00Z"
+        #end_time = "2025-07-03T00:00:00Z"
 
 
         print(f"Running InfluxDB query from {start_time} to {end_time}...")

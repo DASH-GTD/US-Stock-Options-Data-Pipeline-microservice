@@ -228,6 +228,11 @@ services:
       - INFLUXDB_BUCKET=fifteenmin_stockdata
     ports:
       - "8003:8003"
+    depends_on:
+      postgres:
+        condition: service_healthy # <--- This waits for the healthcheck to pass!
+    networks:
+      - stock_pipeline
 
   
   data-api-service:

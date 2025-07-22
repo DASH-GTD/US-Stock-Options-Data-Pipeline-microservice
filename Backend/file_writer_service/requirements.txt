@@ -7,3 +7,4 @@ influxdb-client==1.46.0
 requests==2.32.3 
 gunicorn>=23.0.0 
 django-prometheus
+psycopg2-binary==2.9.9
