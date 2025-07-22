@@ -1,0 +1,37 @@
+apiVersion: v1
+data:
+  ca.pem: |
+    -----BEGIN CERTIFICATE-----
+    MIIEUDCCArigAwIBAgIUBnBXjpP5sNoOXBu2YWQ7pN0wYiswDQYJKoZIhvcNAQEM
+    BQAwQDE+MDwGA1UEAww1NDE5MDRkM2QtYTIxMS00ZjU5LWFjNGMtYmEzZDFkZGZm
+    MWRiIEdFTiAxIFByb2plY3QgQ0EwHhcNMjUwNjIwMDQzODQ4WhcNMzUwNjE4MDQz
+    ODQ4WjBAMT4wPAYDVQQDDDU0MTkwNGQzZC1hMjExLTRmNTktYWM0Yy1iYTNkMWRk
+    ZmYxZGIgR0VOIDEgUHJvamVjdCBDQTCCAaIwDQYJKoZIhvcNAQEBBQADggGPADCC
+    AYoCggGBALcVvketqtwsWMiZIv6N9cuDeCokN9/+0jtf46C5VcqdDZ0KLQ+PkhUM
+    k9WfQ7FFhib4hBso738seMcSEtp/Cad4ip7WJIhjSYomGNwIN2mNgsQPQFcgsnHC
+    jtFE8HXC4pxVg8d1T/wUxIc4lBEP5BV9AgbD/jDLfQfrMVZ6HIBp5q3AMMod2yt2
+    ZMqCVph+zv1DCBrOvXWNDW46EIizQRBG9v4R0UcLZh0tqTyw4OUyRmutCDxQA6rf
+    U+JIQpbr774mc6spuln0IEmyy+vCc/Msc5b7YWmwRcpVDsALaWiQWbqlJrF+8QG0
+    qpM0+/O3tsLZGypfBhv6uQz2p0Z3ZAswrZPpRBBY5vmLapg3RdhOPljGaQPOF7pQ
+    s2MajW4dCIdlyyQRSrPgWOsVoKjWRgJ+AqA5PHSGzRotIdVH3iajIxfZhq1KKogD
+    nGuFzGXFLe15gV9aVlixbOcFKbQpNjX80/zxJKkRr6/KV2Po9b0HoSyqMkrAkECZ
+    W4IA1RHl4QIDAQABo0IwQDAdBgNVHQ4EFgQUVWWCenAMzUglJySGkUKTaOIRPl0w
+    EgYDVR0TAQH/BAgwBgEB/wIBADALBgNVHQ8EBAMCAQYwDQYJKoZIhvcNAQEMBQAD
+    ggGBABaXyx2G3FQkTRaTjMwwC8ZwkVfeCR6zhaxDU4sY3oxPaZrJlEOu3OV6gmjd
+    k+l9jn/lVtEFv+YQ7qV0rHHX1xV+zsQ4Z8sVwdT2KPVV5st5GrxzH3p6+srHoQyr
+    MF4Nwgvm86KFIzPA04U55P3huWCNOpQhoGIi6LHIDNJfXLVEzuCCv3gRhD+SAipP
+    fdZ6aUUGZ3aXuuzUuhUi4jWIu+goRaojE3wn+H1z68Fhr4mG8VWLaeQeKTpngxKi
+    An4YbKxgtappgB17AfzFs1xOlQVOVnhXjQLmYD7UpDIGo7KPbHbrD8b54DKztilN
+    ZkHnGyLO186AWP5zD7LFzYrT9zKpNGsHpQ+gp2eS9NcRk4aMwHcej6YlvUCfE0/6
+    23xF9gtZvyR0PMzfgK/9m0gw+bT+G0+OEzg3Yevhfrqcit3rTNNvc1oma/FLwqlQ
+    LsWIx4E4XiUUlU+3GCGyuE5fVJNYzhXqrsUs8DCRx+A9kwo763dQNOf68cVCrjBx
+    9aP7oQ==
+    -----END CERTIFICATE-----
+kind: ConfigMap
+metadata:
+  annotations:
+    use-subpath: "true"
+  labels:
+    io.kompose.service: airflow
+  name: airflow-cm2
+  # namespace: stock-pipeline

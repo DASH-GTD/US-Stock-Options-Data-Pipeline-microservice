@@ -3,7 +3,6 @@ import json
 import time
 import threading
 import traceback
-import subprocess
 from confluent_kafka import Consumer, KafkaError, KafkaException
 
 from django.conf import settings
@@ -16,54 +15,12 @@ from db_writer.handler.HistoricalSQLHandler import HistoricalSQLHandler
 from db_writer.handler.OptionsSQLHandler import OptionsSQLHandler
 from db_writer.utils.logConfig import LogConfig
 
+# Setup logging
 logger = LogConfig()
 influx = InfluxHandler()
 daily = DailySQLHandler() 
 historical = HistoricalSQLHandler()
 options = OptionsSQLHandler()
-
-def trigger_backup():
-    """Trigger a PostgreSQL backup and manage retention."""
-    try:
-        db_name = "us_stock_options_db"
-        db_user = "sa"
-        db_host = "postgres"
-        db_port = "5432"
-        backup_dir = "/var/backups"
-        timestamp = subprocess.check_output(["date", "+%Y%m%d_%H%M%S"]).decode().strip()
-        backup_file = f"{backup_dir}/{db_name}_{timestamp}.dump"
-        max_backups = 5
-
-        os.makedirs(backup_dir, exist_ok=True)
-        os.chmod(backup_dir, 0o777)
-        logger.info(f"Backup directory: {backup_dir}")
-
-        env = os.environ.copy()
-        env["PGPASSWORD"] = "Passw0rd!"
-        subprocess.run([
-            "pg_dump", "-U", db_user, "-h", db_host, "-p", db_port, "-Fc", db_name,
-            "-f", backup_file
-        ], env=env, check=True)
-        logger.info(f"Backup successful: {backup_file}")
-
-        if not os.path.exists(backup_file):
-            logger.error(f"Backup file not found after creation: {backup_file}")
-            return
-
-        backups = sorted([f for f in os.listdir(backup_dir) if f.startswith(f"{db_name}_") and f.endswith(".dump")], reverse=True)
-        logger.info(f"Found {len(backups)} backups: {backups}")
-        for old_backup in backups[max_backups:]:
-            old_backup_path = os.path.join(backup_dir, old_backup)
-            try:
-                os.remove(old_backup_path)
-                logger.info(f"Deleted old backup: {old_backup}")
-            except Exception as e:
-                logger.error(f"Failed to delete old backup {old_backup}: {e}")
-
-    except subprocess.CalledProcessError as e:
-        logger.error(f"Backup failed: {e}")
-    except Exception as e:
-        logger.error(f"Unexpected error during backup: {e}")
 
 class Command(BaseCommand):
     help = 'Kafka consumer with robust partition processing'
@@ -100,24 +57,23 @@ class Command(BaseCommand):
                         data = json.loads(raw_value)
                         logger.info(f"Parsed data from {msg.topic()} partition {msg.partition()}: {data}")
 
+                        # Validate data
                         if not isinstance(data, list) or not data:
                             logger.error(f"Invalid data format: {data}")
                             continue
                            
+                        # Process based on topic
                         if os.getenv("RUN_DB_HANDLER") == "True":
                             for attempt in range(max_retries):
                                 try:
                                     if msg.topic() == settings.KAFKA_TOPICS['processed-daily']:
                                         daily.write_data(data)
-                                        trigger_backup()
                                     elif msg.topic() == settings.KAFKA_TOPICS['processed-15min']:
                                         influx.write_data(data)
                                     elif msg.topic() == settings.KAFKA_TOPICS['processed-historical']:
                                         historical.write_data(data)
-                                        trigger_backup()
                                     elif msg.topic() == settings.KAFKA_TOPICS['processed-options']:
                                         options.write_data(data)
-                                        trigger_backup()
                                     logger.info(f"Successfully processed data for {msg.topic()}")
                                     break
                                 except Exception as e:
@@ -175,7 +131,7 @@ class Command(BaseCommand):
                     )
                     consumer_thread.daemon = True
                     consumer_thread.start()
-                time.sleep(5)
+                time.sleep(5)  # Check thread health periodically
         except KeyboardInterrupt:
             logger.info("Received shutdown signal. Shutting down Kafka processor...")
             self.running = False

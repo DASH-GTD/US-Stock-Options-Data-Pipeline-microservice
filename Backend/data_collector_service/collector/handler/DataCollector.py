@@ -85,7 +85,7 @@ class ThreadedDataCollector:
         batch_results = []
         params_base = {}
         kafka_topic = ""
-        sleep_time = 10
+        sleep_time = 70  # Adjusted based on API rate limits
 
         if self.trigger_type == 'daily':
             params_base = {
@@ -106,7 +106,7 @@ class ThreadedDataCollector:
         elif self.trigger_type == 'historical':
             params_base = {
                 "interval": "1day",
-                "start_date": (datetime.now(ZoneInfo("UTC")).date() - timedelta(days=3650)).strftime('%Y-%m-%d'),
+                "start_date": (datetime.now(ZoneInfo("UTC")).date() - timedelta(days=7)).strftime('%Y-%m-%d'),
                 "end_date": datetime.now(ZoneInfo("UTC")).date().strftime('%Y-%m-%d'),
                 "outputsize": 5000
             }
@@ -132,7 +132,7 @@ class ThreadedDataCollector:
         except Exception as e:
             logger.error(f"Thread {self.set_id}, Trigger {self.trigger_type}: Processing failed: {str(e)}")
         finally:
-            producer.flush(timeout=60)
+            producer.flush(timeout=30)
             logger.info(f"Thread {self.set_id}, Trigger {self.trigger_type}: All buffered data flushed to Kafka topic {kafka_topic}.")
         
         return batch_results
@@ -144,8 +144,6 @@ def fetch_data(request, trigger_type):
     """
     Generic endpoint to trigger data fetching for 'daily', '15min', or 'historical' data.
     """
-
-    logger.info(f"Starting fetch_data for {trigger_type} at {datetime.now(ZoneInfo('UTC'))}")
     if trigger_type not in ['daily', '15min', 'historical']:
         logger.error(f"Invalid trigger_type: {trigger_type}")
         return JsonResponse({
@@ -153,10 +151,10 @@ def fetch_data(request, trigger_type):
             "message": f"Invalid trigger_type: {trigger_type}"
         }, status=400)
 
+    logger.info(f"API triggered for fetching {trigger_type} data")
     try:
         producer = kafkaConfig.create_producer()
         trigger_time = datetime.now(ZoneInfo("UTC")).strftime('%Y-%m-%d %H:%M:%S')
-        logger.info(f"Processing {len(SYMBOLS_PER_SET)} symbol sets with {NUM_THREADS} threads")
 
         # Divide sets among threads
         sets_per_thread = NUM_SETS // NUM_THREADS
@@ -179,10 +177,9 @@ def fetch_data(request, trigger_type):
         with ThreadPoolExecutor(max_workers=NUM_THREADS) as executor:
             futures = [executor.submit(process_thread, i, set_ids) for i, set_ids in enumerate(set_assignments)]
             for future in futures:
-                future.result()
+                future.result()  # Wait for all threads to complete
 
-        producer.flush(timeout=60)
-        logger.info(f"Completed fetch_data for {trigger_type} at {datetime.now(ZoneInfo('UTC'))}")
+        producer.flush(timeout=30)
         return JsonResponse({
             "status": "success",
             "message": f"Triggered {trigger_type} processing for all sets at {trigger_time}",

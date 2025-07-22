@@ -21,8 +21,8 @@ spec:
       labels:
         io.kompose.service: data-collector
     spec:
-      # imagePullSecrets:
-      #   - name: dockerhub-secret
+      imagePullSecrets:
+        - name: dockerhub-secret
       containers:
         - env:
             - name: APP_DEBUG
@@ -55,7 +55,7 @@ spec:
               value: <enter_api_key4_here>
             - name: TWELVE_DATA_API_5
               value: <enter_api_key5_here>
-          image: hdm08/backend-data-collector:latest
+          image: hdm08/backend-data-collector-service:latest
           name: data-collector
           imagePullPolicy: IfNotPresent
           ports:

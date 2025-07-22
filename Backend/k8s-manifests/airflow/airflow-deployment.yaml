@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert --file docker-compose.yml --out k8s-manifests
+    kompose.version: 1.36.0 (HEAD)
+  labels:
+    io.kompose.service: airflow
+  name: airflow
+  # namespace: stock-pipeline
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: airflow
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert --file docker-compose.yml --out k8s-manifests
+        kompose.version: 1.36.0 (HEAD)
+      labels:
+        io.kompose.service: airflow
+    spec:
+      # imagePullSecrets:
+      #   - name: dockerhub-secret
+      containers:
+        - command:
+            - /entrypoint.sh
+          env:
+            - name: AIRFLOW__API__AUTH_BACKENDS
+              value: airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session
+            - name: AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION
+              value: "true"
+            - name: AIRFLOW__CORE__EXECUTOR
+              value: LocalExecutor
+            - name: AIRFLOW__CORE__FERNET_KEY
+              value: xtvXdBewG6hZRXZu6prldVc8oRVCpgDDhyABAWYiU8U=
+            - name: AIRFLOW__CORE__LOAD_EXAMPLES
+              value: "false"
+            - name: AIRFLOW__CORE__SQL_ALCHEMY_MAX_OVERFLOW
+              value: "10"
+            - name: AIRFLOW__CORE__SQL_ALCHEMY_POOL_ENABLED
+              value: "True"
+            - name: AIRFLOW__CORE__SQL_ALCHEMY_POOL_RECYCLE
+              value: "1800"
+            - name: AIRFLOW__CORE__SQL_ALCHEMY_POOL_SIZE
+              value: "5"
+            - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+              value: postgresql://airflow_admin:npg_3LktTM4aZzUJ@ep-spring-union-a8fmdd1l-pooler.eastus2.azure.neon.tech/airflow_db?sslmode=require&channel_binding=require
+          image: hdm08/backend-airflow:latest
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            exec:
+              command:
+                - curl
+                - --fail
+                - http://localhost:8080/health
+            failureThreshold: 5
+            periodSeconds: 10
+            timeoutSeconds: 10
+          name: airflow
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          securityContext:
+            runAsGroup: 0
+            runAsUser: 50000
+          volumeMounts:
+            - mountPath: /opt/airflow/dags
+              name: airflow-cm0
+            - mountPath: /opt/airflow/logs
+              name: airflow-claim1
+            - mountPath: /ca.pem
+              name: airflow-cm2
+              subPath: ca.pem
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            name: airflow-cm0
+          name: airflow-cm0
+        - name: airflow-claim1
+          persistentVolumeClaim:
+            claimName: airflow-claim1
+        - configMap:
+            items:
+              - key: ca.pem
+                path: ca.pem
+            name: airflow-cm2
+          name: airflow-cm2

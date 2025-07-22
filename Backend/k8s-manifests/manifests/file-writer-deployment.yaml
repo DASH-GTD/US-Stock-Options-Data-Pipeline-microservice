@@ -33,7 +33,7 @@ spec:
               value: Driver={ODBC Driver 18 for SQL Server};Server=dash-gtd.database.windows.net;Database=us_stock_options_db;Uid=dash_gtd;Pwd=wearethebest@69;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=60;
             - name: S3_BUCKET_NAME
               value: dash-gtd-us-east-1-processed-data
-          image: hdm08/backend-file-writer:latest
+          image: hdm08/backend-file-writer-service:latest
           name: file-writer
           imagePullPolicy: IfNotPresent
           ports:

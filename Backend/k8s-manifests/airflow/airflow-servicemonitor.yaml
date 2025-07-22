@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: airflow-servicemonitor
+  labels:
+    release: kube-prometheus-stack-prometheus
+  # namespace: stock-pipeline
+spec:
+  jobLabel: io.kompose.service
+  selector:
+    matchLabels:
+      io.kompose.service: airflow
+  namespaceSelector:
+    matchNames:
+      - default
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s

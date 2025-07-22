@@ -2,9 +2,9 @@ x-airflow-common:
   &airflow-common
     build:
       context: ./airflow_scheduler_service
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-airflow
 
-    image: airflow:latest
+    image: hdm08/backend-airflow:latest
     environment:
       &airflow-common-env
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
@@ -13,14 +13,14 @@ x-airflow-common:
       AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
       AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
-      environment:
-      AIRFLOW__DATABASE__SQL_ALCHEMY_POOL_ENABLED: 'True'
-      AIRFLOW__DATABASE__SQL_ALCHEMY_POOL_SIZE: 5
-      AIRFLOW__DATABASE__SQL_ALCHEMY_MAX_OVERFLOW: 10
-      AIRFLOW__DATABASE__SQL_ALCHEMY_POOL_RECYCLE: 1800
+      AIRFLOW__CORE__SQL_ALCHEMY_POOL_ENABLED: 'True'
+      AIRFLOW__CORE__SQL_ALCHEMY_POOL_SIZE: 5
+      AIRFLOW__CORE__SQL_ALCHEMY_MAX_OVERFLOW: 10
+      AIRFLOW__CORE__SQL_ALCHEMY_POOL_RECYCLE: 1800
     volumes:
-      - ./airflow_scheduler_service/dags:/opt/airflow/dags
+      - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
+      - ./ca.pem:/ca.pem
     user: "${AIRFLOW_UID:-50000}:0"
     depends_on:
       kafka:
@@ -49,57 +49,6 @@ services:
       - data-collector
     networks:
       - stock_pipeline
-  
-  postgres:
-    image: postgres:15
-    environment:
-      - POSTGRES_USER=sa
-      - POSTGRES_PASSWORD=Passw0rd!
-      - POSTGRES_DB=us_stock_options_db
-    ports:
-      - "5432:5432"
-    # volumes:
-    #   - postgres_data:/var/lib/postgresql/data
-    #   - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
-    #   - ./postgres-backups:/var/backups
-    #   - ./postgres-entrypoint.sh:/postgres-entrypoint.sh
-    #   - ./backup-db.sh:/backup-db.sh
-    #   - ./backup-cron:/etc/cron.d/backup-cron
-    # entrypoint: ["/bin/bash", "/postgres-entrypoint.sh"]
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
-      - ./postgres-entrypoint.sh:/usr/local/bin/postgres-entrypoint.sh
-      - ./backups:/var/backups
-    entrypoint: ["/usr/local/bin/postgres-entrypoint.sh"]
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U sa -d us_stock_options_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
-    networks:
-      - stock_pipeline
-    # command: >
-    #   bash -c "/postgres-entrypoint.sh"
-  
-  pgadmin:
-    image: dpage/pgadmin4:8.10
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@example.com
-      - PGADMIN_DEFAULT_PASSWORD=admin
-      - PGADMIN_CONFIG_SERVER_MODE=True
-      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
-    ports:
-      - "5050:80"
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - stock_pipeline
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-    restart: unless-stopped
 
   data-collector:
     build:
@@ -107,14 +56,14 @@ services:
       dockerfile: Dockerfile
       
 
-    image: data-collector:latest
+    image: hdm08/backend-data-collector:latest
 
     environment:
-      - TWELVE_DATA_API_1=889ef64f57ef4abea88ae2e0bbbe3537
-      - TWELVE_DATA_API_2=e4070b64b1aa414db52a8350e38b0367
-      - TWELVE_DATA_API_3=200f5a7b095d40ab84753210bc4a95fa
-      - TWELVE_DATA_API_4=99af927d7def48d3b37a8ee98b7e090b
-      - TWELVE_DATA_API_5=8c0c5c94152c4353a2c3afe5704ea840
+      - TWELVE_DATA_API_1=<enter_api_key1_here>
+      - TWELVE_DATA_API_2=<enter_api_key2_here>
+      - TWELVE_DATA_API_3=<enter_api_key3_here>
+      - TWELVE_DATA_API_4=<enter_api_key4_here>
+      - TWELVE_DATA_API_5=<enter_api_key5_here>
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       - KAFKA_TRIGGER_DAILY=fetch-trigger-daily
       - KAFKA_TRIGGER_15MIN=fetch-trigger-15min
@@ -123,6 +72,7 @@ services:
       - KAFKA_15min_TOPIC=15min-data
       - KAFKA_OPTION_TOPIC=options-data
       - KAFKA_HISTORICAL_TOPIC=historical-data
+      
       - DJANGO_SECRET_KEY="django-insecure-k^c404!2*woj(h(+ek*e#=0sh^qrjw9y-g34m^*qy=^=!43v%^"
       - APP_DEBUG=True
     ports:
@@ -131,14 +81,6 @@ services:
       - kafka
     networks:
       - stock_pipeline
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 4G
-        reservations:
-          cpus: '0.5'
-          memory: 2G
   
   data-processor:
     build:
@@ -146,7 +88,7 @@ services:
       dockerfile: Dockerfile
       
 
-    image: data-processor:latest
+    image: hdm08/backend-data-processor:latest
 
     environment:
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
@@ -178,11 +120,11 @@ services:
       dockerfile: Dockerfile
       
 
-    image: database-writer:latest
+    image: hdm08/backend-database-writer:latest
 
     environment:
       - AZURE_SQL_CONNECTION_STRING=${AZURE_SQL_CONNECTION_STRING}
-      - POSTGRES_CONNECTION_STRING=postgresql://sa:Passw0rd!@postgres:5432/us_stock_options_db
+
       - INFLUXDB_URL=https://us-east-1-1.aws.cloud2.influxdata.com
       - INFLUXDB_TOKEN=p4vPDiJyynco8tjaNhG2ch7A51SHtzN0ta3VsJ6Y1OqVyHtvuAL7K_gKOVmsYV47F_hqaNPlHKOdi6Y_C8Xjw==
       - INFLUXDB_ORG=US_Stock_Data
@@ -196,14 +138,11 @@ services:
       
       - DJANGO_SECRET_KEY=django-insecure-np#5k+3!h2y5he0r=inoh*l5^nw*!t-&e^t-p5zb5ror*^jkyw
       - APP_DEBUG=True
-      - RUN_DB_HANDLER=True
-    
-    volumes:
-      - ./backups:/var/backups
+      - RUN_DB_HANDLER=False
+
     ports:
       - "8002:8002"
     depends_on:
-      - postgres
       - kafka
     networks:
       - stock_pipeline
@@ -214,11 +153,10 @@ services:
       dockerfile: Dockerfile
       
 
-    image: file-writer:latest
+    image: hdm08/backend-file-writer:latest
 
     environment:
       - AZURE_SQL_CONNECTION_STRING=${AZURE_SQL_CONNECTION_STRING}
-      - POSTGRES_CONNECTION_STRING=postgresql://sa:Passw0rd!@postgres:5432/us_stock_options_db
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - S3_BUCKET_NAME=dash-gtd-us-east-1-processed-data
@@ -228,11 +166,6 @@ services:
       - INFLUXDB_BUCKET=fifteenmin_stockdata
     ports:
       - "8003:8003"
-    depends_on:
-      postgres:
-        condition: service_healthy # <--- This waits for the healthcheck to pass!
-    networks:
-      - stock_pipeline
 
   
   data-api-service:
@@ -241,10 +174,9 @@ services:
       dockerfile: Dockerfile
       
 
-    image: data-api-service:latest
+    image: hdm08/backend-data-api-service:latest
 
     environment:
-      - POSTGRES_CONNECTION_STRING=postgresql://sa:Passw0rd!@postgres:5432/us_stock_options_db
       - SQL_SERVER=dash-gtd.database.windows.net
       - SQL_DATABASE=us_stock_options_db
       - SQL_USERNAME=dash_gtd
@@ -254,9 +186,6 @@ services:
       - DJANGO_SECRET_KEY=django-insecure-k^c404!2*woj(h(+ek*e#=0sh^qrjw9y-g34m^*qy=^=!43v%^
     ports:
       - "8006:8006"
-    depends_on:
-      postgres:
-        condition: service_healthy
     networks:
       - stock_pipeline
     restart: unless-stopped
@@ -376,9 +305,6 @@ volumes:
   influxdb_data:
   minio_data:
   grafana_data:
-  postgres_data:
-  postgres_backups:
-  pgadmin_data:
 
 networks:
   stock_pipeline:

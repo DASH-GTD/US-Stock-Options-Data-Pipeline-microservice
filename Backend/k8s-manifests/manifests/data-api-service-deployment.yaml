@@ -21,8 +21,8 @@ spec:
       labels:
         io.kompose.service: data-api-service
     spec:
-      # imagePullSecrets:
-      #   - name: dockerhub-secret
+      imagePullSecrets:
+        - name: dockerhub-secret
       containers:
         - env:
             - name: DJANGO_DEBUG

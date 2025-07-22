@@ -21,8 +21,8 @@ spec:
       labels:
         io.kompose.service: database-writer
     spec:
-      # imagePullSecrets:
-      #   - name: dockerhub-secret
+      imagePullSecrets:
+        - name: dockerhub-secret
       containers:
         - env:
             - name: APP_DEBUG
@@ -51,7 +51,7 @@ spec:
               value: processed-options-data
             - name: RUN_DB_HANDLER
               value: "False"
-          image: hdm08/backend-database-writer:latest
+          image: hdm08/backend-database-writer-service:latest
           name: database-writer
           imagePullPolicy: IfNotPresent
           ports:

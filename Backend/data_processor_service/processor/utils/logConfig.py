@@ -1,7 +1,7 @@
 import logging
 
 class LogConfig:
-    def __init__(self, name='processor_app'):
+    def __init__(self, name='collector_app'):
         self.logger = logging.getLogger(name)
         self.logger.setLevel(logging.INFO) # Default level
 

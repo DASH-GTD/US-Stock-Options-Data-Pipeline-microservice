@@ -1,79 +1,26 @@
 import pandas as pd
 import logging
-import re
 from processor.handler.DataPreprocessor import DataPreprocessor
 from processor.utils.logConfig import LogConfig
 
 logger = LogConfig()
-
-def extract_stock_symbol(contract_symbol):
-    """
-    Extract stock symbol from contract symbol.
-    Contract symbols can have various formats:
-    - AAPL240119C00150000 (AAPL + date + C/P + strike)
-    - AAPL  240119C00150000 (with spaces)
-    - AAPL240119C00150000 (no spaces)
-    """
-    if not contract_symbol:
-        return None
-    
-    # Remove any spaces and convert to uppercase
-    clean_symbol = contract_symbol.replace(' ', '').upper()
-    
-    # Common stock symbols are 1-5 characters
-    # Look for patterns like: SYMBOL + DATE + OPTION_TYPE + STRIKE
-    # The stock symbol is typically at the beginning
-    
-    # Try to extract stock symbol using regex
-    # Pattern: 1-5 letters followed by numbers or option indicators
-    match = re.match(r'^([A-Z]{1,5})', clean_symbol)
-    if match:
-        return match.group(1)
-    
-    # Fallback: take first 3-5 characters if they look like a stock symbol
-    # Stock symbols are typically 1-5 characters and all uppercase letters
-    for length in range(5, 0, -1):
-        candidate = clean_symbol[:length]
-        if candidate.isalpha() and candidate.isupper():
-            return candidate
-    
-    # If all else fails, return the first 3 characters (original behavior)
-    return clean_symbol[:3] if len(clean_symbol) >= 3 else clean_symbol
 
 def OptionDataProcessor(data):
     
     logger.info(f"PROCESSOR CALLED OPTIONDATAPROCESSOR")
 
     try:
-        if not data or len(data) == 0:
-            logger.error("Empty data received in OptionDataProcessor")
-            return data
-        
-        # Extract stock symbol from the first contract symbol
-        first_contract = data[0].get("contractSymbol", "")
-        sym = extract_stock_symbol(first_contract)
-        logger.info(f"Extracted stock symbol '{sym}' from contract symbol '{first_contract}'")
+        sym = data[0]["contractSymbol"][:3]
 
-        # Process all records and extract stock symbols
         for value in data:
-            contract_symbol = value.get("contractSymbol", "")
-            extracted_symbol = extract_stock_symbol(contract_symbol)
-            value['symbol'] = extracted_symbol
-            value['StockName'] = extracted_symbol  # Ensure StockName is also set
+            value['symbol'] = value["contractSymbol"][:3]
 
         # Convert values to DataFrame for processing
         data_df = pd.DataFrame(data)
         
-        # Ensure we have the required columns
-        required_columns = ["contractSymbol", "symbol", "lastTradeDate", "strike", "lastPrice", "bid", "ask", "change", "percentChange", "volume", "openInterest", "impliedVolatility", "inTheMoney", "contractSize", "currency", "expirationDate", "type"]
-        
-        # Filter to only include columns that exist in the data
-        available_columns = [col for col in required_columns if col in data_df.columns]
-        df = data_df[available_columns]
+        df = data_df[["contractSymbol", "symbol", "lastTradeDate", "strike", "lastPrice", "bid", "ask", "change", "percentChange", "volume", "openInterest", "impliedVolatility", "inTheMoney", "contractSize", "currency", "expirationDate", "type"]]
         
         logger.info(f"Processing options data for symbol: {sym}")
-        logger.info(f"DataFrame shape: {df.shape}")
-        logger.info(f"Available columns: {list(df.columns)}")
         
         # Initialize preprocessor for options data
         preprocessor = DataPreprocessor(data_type='options')

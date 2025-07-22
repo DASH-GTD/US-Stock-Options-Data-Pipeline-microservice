@@ -21,8 +21,8 @@ spec:
       labels:
         io.kompose.service: data-processor
     spec:
-      # imagePullSecrets:
-      #   - name: dockerhub-secret
+      imagePullSecrets:
+        - name: dockerhub-secret
       containers:
         - env:
             - name: APP_DEBUG
@@ -55,7 +55,7 @@ spec:
               value: processed-historical-data
             - name: KAFKA_PROCESSED_OPTIONS
               value: processed-options-data
-          image: hdm08/backend-data-processor:latest
+          image: hdm08/backend-data-processor-service:latest
           name: data-processor
           imagePullPolicy: IfNotPresent
           ports:

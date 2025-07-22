@@ -1,0 +1,31 @@
+FROM apache/airflow:2.10.2-python3.9
+
+WORKDIR /opt/airflow
+
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    python3-dev \
+    libpq-dev \
+    postgresql-client \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY ca.pem ca.pem
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+USER airflow
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY airflow_scheduler_service ./airflow_scheduler_service
+COPY dags ./dags
+
+ENV AIRFLOW__CORE__LOAD_EXAMPLES=False
+ENV AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
+
+EXPOSE 8080
+
+ENTRYPOINT ["../entrypoint.sh"]

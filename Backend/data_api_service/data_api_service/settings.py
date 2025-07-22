@@ -134,79 +134,40 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.dummy',
-#         'NAME': os.getenv('SQL_DATABASE', 'us_stock_options_db'),
-#         'OPTIONS': {
-#             'driver': os.getenv('SQL_DRIVER', 'ODBC Driver 18 for SQL Server'),
-#             'host': os.getenv('SQL_SERVER', 'dash-gtd.database.windows.net'),
-#             'database': os.getenv('SQL_DATABASE', 'us_stock_options_db'),
-#             'user': os.getenv('SQL_USERNAME', 'dash_gtd'),
-#             'password': os.getenv('SQL_PASSWORD', 'wearethebest@69'),
-#             'extra_params': 'Encrypt=yes;TrustServerCertificate=no;Connection Timeout=60',
-#         },
-#     },
-#     'secondary_db': {
-#         'ENGINE': 'django.db.backends.dummy',
-#         'NAME': os.getenv('SQL_DATABASE', 'us_stock_options_db'),
-#         'OPTIONS': {
-#             'driver': os.getenv('SQL_DRIVER', 'ODBC Driver 18 for SQL Server'),
-#             'host': os.getenv('SQL_SERVER', 'dash-gtd.database.windows.net'),
-#             'database': os.getenv('SQL_DATABASE', 'us_stock_options_db'),
-#             'user': os.getenv('SQL_USERNAME', 'dash_gtd'),
-#             'password': os.getenv('SQL_PASSWORD', 'wearethebest@69'),
-#             'extra_params': 'Encrypt=yes;TrustServerCertificate=no;Connection Timeout=60',
-#         },
-#     }
-# }
-
-# DATABASE_ROUTERS = ['api_handler.routers.MultiDBRouter']
-
-# REST_FRAMEWORK = {
-#     'DEFAULT_RENDERER_CLASSES': [
-#         'rest_framework.renderers.JSONRenderer',
-#     ]
-# }
-# ALLOWED_HOSTS = ['*']
-
-# # CORS settings
-# CORS_ALLOW_ALL_ORIGINS = True
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:4200",
-#     "http://127.0.0.1:4200",
-# ]
-
-# CORS_ALLOW_METHODS = [
-#     'GET',
-#     'POST',
-#     'PUT',
-#     'DELETE',
-#     'OPTIONS'
-# ]
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', 'us_stock_options_db'),
-        'USER': os.getenv('POSTGRES_USER', 'sa'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'Passw0rd!'),
-        'HOST': os.getenv('POSTGRES_HOST', 'postgres'),
-        'PORT': os.getenv('POSTGRES_PORT', '5432'),
+        'ENGINE': 'django.db.backends.dummy',
+        'NAME': os.getenv('SQL_DATABASE', 'us_stock_options_db'),
+        'OPTIONS': {
+            'driver': os.getenv('SQL_DRIVER', 'ODBC Driver 18 for SQL Server'),
+            'host': os.getenv('SQL_SERVER', 'dash-gtd.database.windows.net'),
+            'database': os.getenv('SQL_DATABASE', 'us_stock_options_db'),
+            'user': os.getenv('SQL_USERNAME', 'dash_gtd'),
+            'password': os.getenv('SQL_PASSWORD', 'wearethebest@69'),
+            'extra_params': 'Encrypt=yes;TrustServerCertificate=no;Connection Timeout=60',
+        },
+    },
+    'secondary_db': {
+        'ENGINE': 'django.db.backends.dummy',
+        'NAME': os.getenv('SQL_DATABASE', 'us_stock_options_db'),
+        'OPTIONS': {
+            'driver': os.getenv('SQL_DRIVER', 'ODBC Driver 18 for SQL Server'),
+            'host': os.getenv('SQL_SERVER', 'dash-gtd.database.windows.net'),
+            'database': os.getenv('SQL_DATABASE', 'us_stock_options_db'),
+            'user': os.getenv('SQL_USERNAME', 'dash_gtd'),
+            'password': os.getenv('SQL_PASSWORD', 'wearethebest@69'),
+            'extra_params': 'Encrypt=yes;TrustServerCertificate=no;Connection Timeout=60',
+        },
     }
 }
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_RENDERER_CLASSES': [
-#         'rest_framework.renderers.JSONRenderer',
-#     ]
-# }
+DATABASE_ROUTERS = ['api_handler.routers.MultiDBRouter']
+
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-    ],
-    'JSON_ENCODER': 'api_handler.views.CustomJSONEncoder',
+    ]
 }
-
 ALLOWED_HOSTS = ['*']
 
 # CORS settings
