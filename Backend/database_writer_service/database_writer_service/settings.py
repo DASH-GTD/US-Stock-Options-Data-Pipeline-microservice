@@ -130,7 +130,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Azure SQL Connection
+KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS'),
 
 # InfluxDB Settings
 INFLUX_URL = os.getenv("INFLUX_URL")

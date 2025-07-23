@@ -74,19 +74,19 @@ class Command(BaseCommand):
                 # Process based on topic
                 if topic == settings.KAFKA_TOPICS['daily']:
                     processed = DailyDataProcessor(data)
-                    output_topic = settings.KAFKA_TOPICS['processed-daily'],
+                    output_topic = settings.KAFKA_TOPICS['processed-daily']
                     
                 elif topic == settings.KAFKA_TOPICS['15min']:
                     processed = RealTimeDataProcessor(data)
-                    output_topic = settings.KAFKA_TOPICS['processed-15min'],
+                    output_topic = settings.KAFKA_TOPICS['processed-15min']
                     
                 elif topic == settings.KAFKA_TOPICS['options']:
                     processed = OptionDataProcessor(data)
-                    output_topic = settings.KAFKA_TOPICS['processed-options'],
+                    output_topic = settings.KAFKA_TOPICS['processed-options']
                     
                 elif topic == settings.KAFKA_TOPICS['historical']:
                     processed = HistoricalDataProcessor(data)
-                    output_topic = settings.KAFKA_TOPICS['processed-historical'],
+                    output_topic = settings.KAFKA_TOPICS['processed-historical']
                     
 
                 data_value = json.dumps(processed).encode('utf-8')

@@ -57,7 +57,7 @@ services:
       - POSTGRES_PASSWORD=Passw0rd!
       - POSTGRES_DB=us_stock_options_db
     ports:
-      - "5432:5432"
+      - "5433:5433"
     # volumes:
     #   - postgres_data:/var/lib/postgresql/data
     #   - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
@@ -110,11 +110,11 @@ services:
     image: hdm08/backend-data-collector:latest
 
     environment:
-      - TWELVE_DATA_API_1=889ef64f57ef4abea88ae2e0bbbe3537
-      - TWELVE_DATA_API_2=e4070b64b1aa414db52a8350e38b0367
-      - TWELVE_DATA_API_3=200f5a7b095d40ab84753210bc4a95fa
-      - TWELVE_DATA_API_4=99af927d7def48d3b37a8ee98b7e090b
-      - TWELVE_DATA_API_5=8c0c5c94152c4353a2c3afe5704ea840
+      - TWELVE_DATA_API_1=<>
+      - TWELVE_DATA_API_2=<>
+      - TWELVE_DATA_API_3=<>
+      - TWELVE_DATA_API_4=<>
+      - TWELVE_DATA_API_5=<>
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       - KAFKA_TRIGGER_DAILY=fetch-trigger-daily
       - KAFKA_TRIGGER_15MIN=fetch-trigger-15min
@@ -123,6 +123,8 @@ services:
       - KAFKA_15min_TOPIC=15min-data
       - KAFKA_OPTION_TOPIC=options-data
       - KAFKA_HISTORICAL_TOPIC=historical-data
+      - KAFKA_TASK_TOPIC=task-queue
+
       - DJANGO_SECRET_KEY="django-insecure-k^c404!2*woj(h(+ek*e#=0sh^qrjw9y-g34m^*qy=^=!43v%^"
       - APP_DEBUG=True
     ports:
@@ -281,7 +283,7 @@ services:
         echo 'Waiting for Kafka to be ready...'
         sleep 5
       done
-
+      kafka-topics --create --topic task-queue                     --bootstrap-server kafka:9092 --replication-factor 1 --partitions 1 
       kafka-topics --create --topic daily-data                     --bootstrap-server kafka:9092 --replication-factor 1 --partitions 5
       kafka-topics --create --topic 15min-data                     --bootstrap-server kafka:9092 --replication-factor 1 --partitions 5
       kafka-topics --create --topic options-data                   --bootstrap-server kafka:9092 --replication-factor 1 --partitions 5
