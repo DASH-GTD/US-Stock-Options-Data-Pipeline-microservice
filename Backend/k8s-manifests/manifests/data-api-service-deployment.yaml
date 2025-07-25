@@ -39,7 +39,7 @@ spec:
               value: dash-gtd.database.windows.net
             - name: SQL_USERNAME
               value: dash_gtd
-          image: hdm08/backend-data-api-service:latest
+          image: hdm08/data_api_service:latest
           name: data-api-service
           imagePullPolicy: IfNotPresent
           ports:

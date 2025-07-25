@@ -55,7 +55,11 @@ spec:
               value: processed-historical-data
             - name: KAFKA_PROCESSED_OPTIONS
               value: processed-options-data
+<<<<<<< HEAD
           image: hdm08/backend-data-processor-service:latest
+=======
+          image: hdm08/data_processor_service:latest
+>>>>>>> a0680f0 (alinging docker image and deployment)
           name: data-processor
           imagePullPolicy: IfNotPresent
           ports:

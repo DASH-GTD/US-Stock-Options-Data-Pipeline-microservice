@@ -72,7 +72,7 @@ jobs:
 
   build-docker-only:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
+    # if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -105,7 +105,11 @@ jobs:
           for service in airflow_scheduler_service data_api_service data_collector_service data_processor_service database_writer_service file_writer_service; do
             echo "Building Docker image for $service"
             ls -la Backend/$service
+<<<<<<< HEAD
             docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/$service:latest Backend/$service
+=======
+            docker buildx build --platform linux/amd64 -t ${{ secrets.DOCKERHUB_USERNAME }}/$service:latest --push .
+>>>>>>> a0680f0 (alinging docker image and deployment)
             echo "Pushing Docker image for $service"
             docker push ${{ secrets.DOCKERHUB_USERNAME }}/$service:latest
           done

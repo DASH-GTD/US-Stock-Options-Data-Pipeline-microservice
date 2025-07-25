@@ -55,7 +55,11 @@ spec:
               value: <enter_api_key4_here>
             - name: TWELVE_DATA_API_5
               value: <enter_api_key5_here>
+<<<<<<< HEAD
           image: hdm08/backend-data-collector-service:latest
+=======
+          image: hdm08/data_collector_service:latest
+>>>>>>> a0680f0 (alinging docker image and deployment)
           name: data-collector
           imagePullPolicy: IfNotPresent
           ports:

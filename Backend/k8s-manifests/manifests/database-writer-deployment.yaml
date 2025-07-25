@@ -51,7 +51,11 @@ spec:
               value: processed-options-data
             - name: RUN_DB_HANDLER
               value: "False"
+<<<<<<< HEAD
           image: hdm08/backend-database-writer-service:latest
+=======
+          image: hdm08/database_writer_service:latest
+>>>>>>> a0680f0 (alinging docker image and deployment)
           name: database-writer
           imagePullPolicy: IfNotPresent
           ports:

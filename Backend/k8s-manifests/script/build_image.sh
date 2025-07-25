@@ -4,6 +4,7 @@
 BASE_PATH="../../"
 
 services=(
+  "airflow_scheduler_service"
   "data_collector_service"
   "data_processor_service"
   "database_writer_service"
