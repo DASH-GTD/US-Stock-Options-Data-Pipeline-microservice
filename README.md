@@ -113,7 +113,19 @@ run_kafka_writer.py:
 
 
 ## File Writer Service
+Fetches options data from call_options and put_options tables, and stock data from the StockData table from database SQL tables.
+Fetches 15-minute interval real-time stock data from InfluxDB.
+Filters and prepares:
+Current day’s data from SQL tables.
+Historical data (1 year) from SQL tables.
+15-minute real-time data from InfluxDB.
 
+Saves each dataset as a CSV file 
+Uploads the CSV files to AWS S3 under the following paths:
+
+Options Data → s3://dash-gtd-us-east-1-processed-data/options_data/
+Stock Data → s3://dash-gtd-us-east-1-processed-data/stock_data/
+15-Min Real-Time Data → s3://dash-gtd-us-east-1-processed-data/real_time_15min_data/
 
 ## Data Api Service
 
