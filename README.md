@@ -135,12 +135,25 @@ run_kafka_writer.py:
 
 ## Observability
 
+This project integrates **Prometheus** and **Grafana** to provide full observability of the microservices-based data pipeline. The monitoring setup ensures that all services are continuously tracked for performance, health, and reliability.
+
 #### Prometheus: Collects metrics on:
 
+- HTTP request counts by service, endpoint, and method
+- HTTP response status codes (e.g., 200, 400, 500)
+- Request latency and processing time per endpoint
+- CPU usage and memory consumption of each microservice
+- Python runtime metrics including garbage collection cycles
+- Service health and availability via /metrics endpoints in all Django services
 
 #### Grafana: Dashboards visualize:
 
-
+- **Request Volume by Endpoint**– number of API calls grouped by service/view
+- **Response Code Distribution**– errors vs. successful requests for quick debugging
+- **Latency Tracking**– average and peak response times for API endpoints
+- **Resource Utilization**– CPU and memory usage for each pod/service
+- **Garbage Collection Metrics**– monitoring Python runtime efficiency
+- **Overall System Health**– consolidated view of data pipeline availability and performance
 
 # Frontend
 
